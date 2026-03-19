@@ -1,991 +1,911 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>UC治療候補＋複数お気に入り＋安全性表示</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<style>
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  background:#f2f2f7;
-}
-.header{
-  background:#fff;
-  padding:15px;
-  font-size:20px;
-  font-weight:bold;
-  text-align:center;
-  border-bottom:1px solid #ddd;
-}
-.card{
-  background:#fff;
-  margin:15px;
-  padding:15px;
-  border-radius:12px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.05);
-}
-.label{
-  font-size:14px;
-  color:#555;
-  margin-top:8px;
-}
-input[type="number"], select{
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  border-radius:8px;
-  border:1px solid #ddd;
-  font-size:16px;
-  box-sizing:border-box;
-}
-.switch{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin:10px 0;
-}
-.switch input[type="checkbox"]{
-  width:auto;
-  transform:scale(1.2);
-}
-.favorite-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px 14px;
-  margin-top:10px;
-}
-.favorite-item{
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-  font-size:14px;
-}
-.favorite-item input{
-  margin-top:2px;
-  transform:scale(1.15);
-}
-button{
-  width:90%;
-  margin:20px auto;
-  display:block;
-  padding:15px;
-  font-size:18px;
-  background:#007aff;
-  color:#fff;
-  border:none;
-  border-radius:12px;
-}
-.subbutton{
-  background:#34c759;
-  margin-top:10px;
-}
-.result, .warn{
-  margin:15px;
-  padding:15px;
-  background:#fff;
-  border-radius:12px;
-}
-.warn{
-  background:#fff3cd;
-  color:#7a5d00;
-  border:1px solid #f3d98b;
-  display:none;
-}
-.tag{
-  display:inline-block;
-  background:#007aff;
-  color:#fff;
-  padding:5px 10px;
-  border-radius:20px;
-  margin:5px 5px 0 0;
-  font-size:14px;
-}
-.graytag{
-  display:inline-block;
-  background:#8e8e93;
-  color:#fff;
-  padding:5px 10px;
-  border-radius:20px;
-  margin:5px 5px 0 0;
-  font-size:14px;
-}
-.goldtag{
-  display:inline-block;
-  background:#ff9500;
-  color:#fff;
-  padding:5px 10px;
-  border-radius:20px;
-  margin:5px 5px 0 0;
-  font-size:14px;
-}
-.redtag{
-  display:inline-block;
-  background:#ff3b30;
-  color:#fff;
-  padding:5px 10px;
-  border-radius:20px;
-  margin:5px 5px 0 0;
-  font-size:14px;
-}
-.sectiontitle{
-  font-weight:700;
-  margin-top:8px;
-  margin-bottom:10px;
-}
-.note{
-  font-size:13px;
-  color:#666;
-  margin-top:8px;
-  line-height:1.5;
-}
-.small{
-  font-size:13px;
-  color:#555;
-  line-height:1.55;
-}
-.copymsg{
-  text-align:center;
-  font-size:13px;
-  color:#34c759;
-  margin-top:-10px;
-  margin-bottom:15px;
-  display:none;
-}
-hr{
-  border:none;
-  border-top:1px solid #ddd;
-  margin:14px 0;
-}
-.drugblock{
-  padding:12px 0 4px 0;
-  border-top:1px solid #eee;
-}
-.drugblock:first-child{
-  border-top:none;
-}
-ul.tight{
-  margin:6px 0 10px 18px;
-  padding:0;
-}
-ul.tight li{
-  margin:2px 0;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>UC治療薬追加候補アプリ（5-ASA基本治療）</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --line:#d9e0ea;
+      --text:#1f2937;
+      --sub:#6b7280;
+      --accent:#2563eb;
+      --accent2:#eff6ff;
+      --danger:#b91c1c;
+      --good:#065f46;
+      --warn:#92400e;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:20px 14px 40px;
+    }
+    .title{
+      font-size:clamp(24px,4vw,34px);
+      font-weight:800;
+      margin:0 0 8px;
+      letter-spacing:.02em;
+    }
+    .lead{
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#9a3412;
+      border-radius:14px;
+      padding:12px 14px;
+      margin:0 0 18px;
+      font-size:14px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:16px;
+      box-shadow:0 4px 16px rgba(0,0,0,.04);
+    }
+    h2{
+      font-size:18px;
+      margin:0 0 12px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+    @media (max-width:760px){
+      .grid,.grid-3{grid-template-columns:1fr;}
+    }
+    label.lbl{
+      display:block;
+      font-weight:700;
+      margin-bottom:6px;
+      font-size:14px;
+    }
+    input[type="number"], select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:11px 12px;
+      font-size:15px;
+      background:white;
+    }
+    .checklist{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px 14px;
+    }
+    .checklist-3{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px 14px;
+    }
+    @media (max-width:900px){
+      .checklist-3{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media (max-width:640px){
+      .checklist,.checklist-3{grid-template-columns:1fr;}
+    }
+    .check{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      background:#fff;
+    }
+    .check input{margin-top:3px;}
+    .check small{
+      display:block;
+      color:var(--sub);
+      font-size:12px;
+      margin-top:2px;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    button{
+      border:none;
+      border-radius:12px;
+      padding:12px 16px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .primary{
+      background:var(--accent);
+      color:white;
+    }
+    .secondary{
+      background:#e5e7eb;
+      color:#111827;
+    }
+    .result{
+      white-space:pre-wrap;
+      background:#fbfdff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:16px;
+      min-height:140px;
+      font-size:14px;
+    }
+    .tag{
+      display:inline-block;
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:var(--accent2);
+      color:var(--accent);
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    .muted{color:var(--sub); font-size:13px;}
+    .ok{color:var(--good); font-weight:700;}
+    .ng{color:var(--danger); font-weight:700;}
+    .warn{color:var(--warn); font-weight:700;}
+    .foot{
+      color:var(--sub);
+      font-size:12px;
+      margin-top:10px;
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1 class="title">UC治療薬追加候補アプリ（5-ASA基本治療）</h1>
+    <p class="lead">
+      このアプリは、<strong>5-ASAを基本治療</strong>として行っている潰瘍性大腸炎患者で、
+      <strong>ステロイド依存/不応</strong>または<strong>レクタブル依存/不応</strong>となった場合に、
+      <strong>追加を検討すべき薬剤</strong>の候補を整理するための支援ツールです。
+      <br>※ 5-ASA不耐症でない限り、5-ASA継続・最適化を前提に表示します。
+    </p>
 
-<div class="header">UC治療候補＋複数お気に入り＋安全性表示</div>
+    <div class="card">
+      <h2>基本情報</h2>
+      <div class="grid-3">
+        <div>
+          <label class="lbl" for="age">年齢</label>
+          <input id="age" type="number" min="0" max="120" placeholder="例：42">
+        </div>
+        <div>
+          <label class="lbl" for="weight">体重（kg）</label>
+          <input id="weight" type="number" min="0" max="300" step="0.1" placeholder="例：60">
+        </div>
+        <div>
+          <label class="lbl" for="severity">病勢</label>
+          <select id="severity">
+            <option value="mild">軽症</option>
+            <option value="moderate" selected>中等症</option>
+            <option value="severe">重症</option>
+            <option value="acute_severe">急性重症（入院想定）</option>
+          </select>
+        </div>
+      </div>
 
-<div class="warn" id="warnBox"></div>
+      <div class="grid-3" style="margin-top:14px;">
+        <div>
+          <label class="lbl" for="extent">病変範囲</label>
+          <select id="extent">
+            <option value="proctitis">直腸炎型</option>
+            <option value="left">左側大腸炎型</option>
+            <option value="pancolitis" selected>全大腸炎型</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl" for="mayo">内視鏡（Mayo）</label>
+          <select id="mayo">
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">基本方針</label>
+          <div class="muted" style="padding-top:8px;">
+            5-ASA不耐症でない限り、<strong>5-ASA継続/最適化</strong>を前提として候補を表示します。
+          </div>
+        </div>
+      </div>
+    </div>
 
-<div class="card">
-  <div class="label">年齢</div>
-  <input type="number" id="age" placeholder="例: 45">
+    <div class="card">
+      <h2>現在の治療状況</h2>
+      <div class="checklist">
+        <label class="check">
+          <input type="checkbox" id="asaIntolerant">
+          <span>
+            <strong>5-ASA不耐症</strong>
+            <small>これがない場合は5-ASA継続/最適化を基本とする</small>
+          </span>
+        </label>
 
-  <div class="label">体重（kg）※体重依存薬の概算に使用</div>
-  <input type="number" id="w" placeholder="例: 60">
+        <label class="check">
+          <input type="checkbox" id="asaInsufficient" checked>
+          <span>
+            <strong>5-ASAで効果不十分</strong>
+            <small>十分量・適切な局所治療を含めても不十分</small>
+          </span>
+        </label>
 
-  <div class="label">病勢</div>
-  <select id="activity">
-    <option value="mild">軽症</option>
-    <option value="moderate">中等症</option>
-    <option value="severe">重症</option>
-    <option value="asuc">急性重症（入院想定）</option>
-  </select>
+        <label class="check">
+          <input type="checkbox" id="rectabuleDependent">
+          <span>
+            <strong>レクタブル依存</strong>
+            <small>減量/中止で再燃する</small>
+          </span>
+        </label>
 
-  <div class="label">病変範囲</div>
-  <select id="extent">
-    <option value="rectum">直腸炎型</option>
-    <option value="left">左側大腸炎型</option>
-    <option value="total">全大腸炎型</option>
-  </select>
+        <label class="check">
+          <input type="checkbox" id="rectabuleRefractory">
+          <span>
+            <strong>レクタブル不応</strong>
+            <small>局所ステロイドで十分な改善が得られない</small>
+          </span>
+        </label>
 
-  <div class="label">内視鏡（Mayo）</div>
-  <select id="mayo">
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-  </select>
-</div>
+        <label class="check">
+          <input type="checkbox" id="steroidDependent">
+          <span>
+            <strong>ステロイド依存</strong>
+            <small>減量で再燃、離脱困難</small>
+          </span>
+        </label>
 
-<div class="card">
-  <div class="sectiontitle">お気に入り薬剤（複数選択可）</div>
-  <div class="small">選択した薬剤を優先し、同系統薬もやや優先します。</div>
-  <div class="favorite-grid">
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="レクタブル"><span>レクタブル</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="メサラジン坐剤"><span>メサラジン坐剤</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="メサラジン注腸"><span>メサラジン注腸</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="経口5-ASA"><span>経口5-ASA</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="コレチメント"><span>コレチメント</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="カログラ"><span>カログラ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="ウパダシチニブ"><span>ウパダシチニブ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="トファシチニブ"><span>トファシチニブ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="フィルゴチニブ"><span>フィルゴチニブ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="オザニモド"><span>オザニモド</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="エトラシモド"><span>エトラシモド</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="ベドリズマブ"><span>ベドリズマブ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="ウステキヌマブ"><span>ウステキヌマブ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="ミリキズマブ"><span>ミリキズマブ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="インフリキシマブ"><span>インフリキシマブ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="アダリムマブ"><span>アダリムマブ</span></label>
-    <label class="favorite-item"><input type="checkbox" class="favDrug" value="ゴリムマブ"><span>ゴリムマブ</span></label>
+        <label class="check">
+          <input type="checkbox" id="steroidRefractory">
+          <span>
+            <strong>ステロイド不応 / 抵抗</strong>
+            <small>全身ステロイドで十分な反応が得られない</small>
+          </span>
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="needFast">
+          <span>
+            <strong>即効性を重視</strong>
+            <small>早期の症状改善を優先</small>
+          </span>
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="preferOral">
+          <span>
+            <strong>内服を優先</strong>
+            <small>通院負担や注射回避を考慮</small>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>お気に入り薬剤（複数選択可）</h2>
+      <div class="muted" style="margin-bottom:10px;">
+        選択した薬剤を優先し、同系統薬も少し優先します。
+      </div>
+      <div class="checklist-3" id="favoriteArea"></div>
+    </div>
+
+    <div class="card">
+      <h2>既治療歴 / 不応歴</h2>
+      <div class="checklist">
+        <label class="check"><input type="checkbox" id="hxAntiTNF"><span><strong>抗TNF不応</strong></span></label>
+        <label class="check"><input type="checkbox" id="hxVedo"><span><strong>ベドリズマブ不応</strong></span></label>
+        <label class="check"><input type="checkbox" id="hxUste"><span><strong>ウステキヌマブ不応</strong></span></label>
+        <label class="check"><input type="checkbox" id="hxJAK"><span><strong>JAK阻害薬不応</strong></span></label>
+        <label class="check"><input type="checkbox" id="hxS1P"><span><strong>S1P調節薬不応</strong></span></label>
+        <label class="check"><input type="checkbox" id="hxCarogra"><span><strong>カロテグラストメチル不応</strong></span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>リスク・注意点</h2>
+      <div class="checklist">
+        <label class="check">
+          <input type="checkbox" id="riskInfection">
+          <span><strong>感染リスク高い / 高齢 / 併存症あり</strong></span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="riskCV">
+          <span><strong>血栓・心血管リスクあり</strong></span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="riskSmoking">
+          <span><strong>喫煙</strong></span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="riskPregnancy">
+          <span><strong>妊娠中 / 妊娠の可能性</strong></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="actions">
+        <button class="primary" onclick="showCandidates()">候補を表示</button>
+        <button class="secondary" onclick="copyResult()">結果をコピー</button>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="tag">結果</div>
+        <div id="result" class="result">入力後に「候補を表示」を押してください。</div>
+        <div class="foot">※ 最終判断は診療ガイドライン、患者背景、保険適用、既往歴、感染評価、妊娠希望、院内運用を踏まえて行ってください。</div>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="card">
-  <div class="sectiontitle">現在の状況</div>
-  <div class="switch"><span>5-ASAで不十分</span><input type="checkbox" id="fail5asa"></div>
-  <div class="switch"><span>ステロイド依存</span><input type="checkbox" id="steroidDep"></div>
-  <div class="switch"><span>ステロイド抵抗/不応</span><input type="checkbox" id="steroidRef"></div>
-  <div class="switch"><span>即効性を重視</span><input type="checkbox" id="fast"></div>
-  <div class="switch"><span>内服を優先</span><input type="checkbox" id="oral"></div>
-</div>
-
-<div class="card">
-  <div class="sectiontitle">既治療歴 / 不応歴</div>
-  <div class="switch"><span>抗TNF不応</span><input type="checkbox" id="antiTnffail"></div>
-  <div class="switch"><span>ベドリズマブ不応</span><input type="checkbox" id="vedofail"></div>
-  <div class="switch"><span>ウステキヌマブ不応</span><input type="checkbox" id="ustefail"></div>
-  <div class="switch"><span>JAK阻害薬不応</span><input type="checkbox" id="jakfail"></div>
-  <div class="switch"><span>S1P調節薬不応</span><input type="checkbox" id="s1pfail"></div>
-  <div class="switch"><span>局所治療で不十分</span><input type="checkbox" id="localfail"></div>
-</div>
-
-<div class="card">
-  <div class="sectiontitle">リスク・注意点</div>
-  <div class="switch"><span>感染リスク高い / 高齢 / 併存症あり</span><input type="checkbox" id="highInfectionRisk"></div>
-  <div class="switch"><span>血栓・心血管リスクあり</span><input type="checkbox" id="cvRisk"></div>
-  <div class="switch"><span>喫煙</span><input type="checkbox" id="smoke"></div>
-  <div class="switch"><span>妊娠中 / 妊娠の可能性</span><input type="checkbox" id="pregnancyRisk"></div>
-</div>
-
-<button onclick="calc()">候補を表示</button>
-<button class="subbutton" onclick="copyResult()">結果をコピー</button>
-<div class="copymsg" id="copyMsg">コピーしました</div>
-
-<div class="result" id="out">
-  入力後に「候補を表示」を押してください。
-</div>
-
-<script>
-let lastCopyText = "";
-
-const DRUGS = {
-  "経口5-ASA": {
-    family: "5ASA",
-    priceType: "28日概算",
-    defaultCost: 8652.0,
-    costText: "約8,652円 / 28日（例: リアルダ 2.4g/日想定）",
-    contraindications: [
-      "本剤成分に対する過敏症",
-      "サリチル酸系で重い過敏症歴"
-    ],
-    adverse: [
-      "腎機能障害",
-      "膵炎",
-      "発疹・薬剤熱",
-      "肝機能障害"
-    ],
-    duration: "明確な投与上限なし。寛解維持にも使用。"
-  },
-  "メサラジン坐剤": {
-    family: "local5ASA",
-    priceType: "28日概算",
-    defaultCost: 5224.8,
-    costText: "約5,225円 / 28日（1g坐剤 1個/日想定）",
-    contraindications: [
-      "本剤成分に対する過敏症",
-      "サリチル酸系で重い過敏症歴"
-    ],
-    adverse: [
-      "局所刺激感",
-      "腹痛",
-      "発疹",
-      "まれに腎障害"
-    ],
-    duration: "明確な投与上限なし。導入後も維持使用あり。"
-  },
-  "メサラジン注腸": {
-    family: "local5ASA",
-    priceType: "28日概算",
-    defaultCost: 9620.8,
-    costText: "約9,621円 / 28日（1g注腸 1個/日想定）",
-    contraindications: [
-      "本剤成分に対する過敏症",
-      "サリチル酸系で重い過敏症歴"
-    ],
-    adverse: [
-      "局所不快感",
-      "腹痛",
-      "下痢",
-      "まれに腎障害"
-    ],
-    duration: "明確な投与上限なし。遠位病変で長期併用あり。"
-  },
-  "レクタブル": {
-    family: "localSteroid",
-    priceType: "28日概算",
-    defaultCost: 18155.2,
-    costText: "約18,155円 / 28日（1回1プッシュ 1日2回想定）",
-    contraindications: [
-      "有効な抗菌剤の存在しない感染症",
-      "全身性真菌症",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "副腎機能抑制",
-      "感染増悪",
-      "直腸部違和感",
-      "ステロイド関連副作用"
-    ],
-    duration: "寛解導入向き。漫然長期連用は避ける想定。"
-  },
-  "コレチメント": {
-    family: "oralSteroid",
-    priceType: "28日概算",
-    defaultCost: 16928.8,
-    costText: "約16,929円 / 28日（9mg/日想定）",
-    contraindications: [
-      "有効な抗菌剤の存在しない感染症",
-      "全身性真菌症",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "副腎機能抑制",
-      "感染増悪",
-      "高血糖",
-      "浮腫・不眠"
-    ],
-    duration: "導入用途。8週間前後を目安に見直し。"
-  },
-  "カログラ": {
-    family: "antiIntegrinOral",
-    priceType: "28日概算",
-    defaultCost: 44732.8,
-    costText: "約44,733円 / 28日（960mg 1日3回想定）",
-    contraindications: [
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "頭痛",
-      "感覚異常",
-      "上咽頭炎",
-      "肝機能異常"
-    ],
-    duration: "明確な投与上限なし。5-ASA不十分な中等症で継続使用。"
-  },
-  "ウパダシチニブ": {
-    family: "JAK",
-    priceType: "28日概算",
-    defaultCost: 185584.0,
-    costText: "約185,584円 / 28日（30mg/日想定）",
-    contraindications: [
-      "重篤な感染症",
-      "活動性結核",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "帯状疱疹",
-      "重篤感染症",
-      "血栓塞栓症",
-      "心血管イベント"
-    ],
-    duration: "導入45mgを8週、効果不十分なら追加8週可。維持は15mg/30mgで明確な上限なし。"
-  },
-  "トファシチニブ": {
-    family: "JAK",
-    priceType: "28日概算",
-    defaultCost: 126610.4,
-    costText: "約126,610円 / 28日（10mg 1日2回想定）",
-    contraindications: [
-      "重篤な感染症",
-      "活動性結核",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "帯状疱疹",
-      "重篤感染症",
-      "血栓塞栓症",
-      "脂質上昇"
-    ],
-    duration: "導入10mg 1日2回を8週、効果不十分なら追加8週可。維持は5mg 1日2回が基本。"
-  },
-  "フィルゴチニブ": {
-    family: "JAK",
-    priceType: "28日概算",
-    defaultCost: 116468.8,
-    costText: "約116,469円 / 28日（200mg/日想定）",
-    contraindications: [
-      "重篤な感染症",
-      "活動性結核",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "重篤感染症",
-      "帯状疱疹",
-      "肝機能異常",
-      "血球減少"
-    ],
-    duration: "200mg/日。22週投与後に効果がなければ中止。"
-  },
-  "オザニモド": {
-    family: "S1P",
-    priceType: "28日概算",
-    defaultCost: 134198.4,
-    costText: "約134,198円 / 28日（0.92mg/日想定）",
-    contraindications: [
-      "重篤な不整脈・房室ブロック等",
-      "重度感染症",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "徐脈・伝導障害",
-      "肝機能障害",
-      "黄斑浮腫",
-      "感染症"
-    ],
-    duration: "明確な投与上限なし。漸増導入後に維持。"
-  },
-  "エトラシモド": {
-    family: "S1P",
-    priceType: "28日概算",
-    defaultCost: 134198.4,
-    costText: "約134,198円 / 28日（2mg/日想定）",
-    contraindications: [
-      "妊婦又は妊娠している可能性のある女性",
-      "重篤な不整脈・房室ブロック等",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "徐脈・伝導障害",
-      "感染症",
-      "肝機能障害",
-      "黄斑浮腫"
-    ],
-    duration: "明確な投与上限なし。継続時は安全性モニタリング前提。"
-  },
-  "ベドリズマブ": {
-    family: "antiIntegrinBio",
-    priceType: "28日概算",
-    defaultCost: 139776.0,
-    costText: "約139,776円 / 28日（皮下注108mg隔週 維持換算）",
-    contraindications: [
-      "本剤成分に対する重度の過敏症",
-      "重度感染症がコントロールされていない状態"
-    ],
-    adverse: [
-      "重篤感染症",
-      "輸注/注射反応",
-      "過敏症",
-      "間質性肺疾患"
-    ],
-    duration: "明確な投与上限なし。導入後に維持継続。"
-  },
-  "ウステキヌマブ": {
-    family: "IL12/23",
-    priceType: "28日概算",
-    defaultCost: 132591.3,
-    costText: "約132,591円 / 28日（90mg 12週ごと 維持換算）",
-    contraindications: [
-      "重篤な感染症",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "感染症",
-      "注射部位反応",
-      "過敏症",
-      "可逆性後白質脳症症候群に注意"
-    ],
-    duration: "明確な投与上限なし。導入後に維持継続。"
-  },
-  "ミリキズマブ": {
-    family: "IL23",
-    priceType: "28日概算",
-    defaultCost: 242888.0,
-    costText: "約242,888円 / 28日（200mg 4週ごと 維持換算）",
-    contraindications: [
-      "重篤な感染症",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "感染症",
-      "注射部位反応",
-      "過敏症",
-      "肝機能異常"
-    ],
-    duration: "12週で不十分なら追加導入可。維持は200mg 4週ごとで上限明記なし。"
-  },
-  "インフリキシマブ": {
-    family: "antiTNF",
-    priceType: "28日概算",
-    defaultCost: null,
-    costText: "",
-    contraindications: [
-      "重篤な感染症",
-      "活動性結核",
-      "中等度以上の心不全",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "重篤感染症",
-      "結核再活性化",
-      "輸注反応",
-      "うっ血性心不全悪化"
-    ],
-    duration: "明確な投与上限なし。導入後に維持継続。"
-  },
-  "アダリムマブ": {
-    family: "antiTNF",
-    priceType: "28日概算",
-    defaultCost: 99452.0,
-    costText: "約99,452円 / 28日（40mg隔週 維持換算）",
-    contraindications: [
-      "重篤な感染症",
-      "活動性結核",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "重篤感染症",
-      "結核再活性化",
-      "注射部位反応",
-      "脱髄疾患に注意"
-    ],
-    duration: "明確な投与上限なし。導入後に維持継続。"
-  },
-  "ゴリムマブ": {
-    family: "antiTNF",
-    priceType: "28日概算",
-    defaultCost: 221298.0,
-    costText: "約221,298円 / 28日（100mg 4週ごと 維持換算）",
-    contraindications: [
-      "重篤な感染症",
-      "活動性結核",
-      "本剤成分に対する過敏症"
-    ],
-    adverse: [
-      "重篤感染症",
-      "結核再活性化",
-      "注射部位反応",
-      "肝機能障害"
-    ],
-    duration: "明確な投与上限なし。導入後に維持継続。"
-  }
-};
-
-function yen(num){
-  return "約" + Math.round(num).toLocaleString("ja-JP") + "円";
-}
-
-function infliximabCost(weight){
-  const wt = (weight && weight > 0) ? weight : 60;
-  const vials = Math.ceil((wt * 5) / 100);
-  const oneInfusion = vials * 51351;
-  const every8WeeksEquivalent28d = oneInfusion / 2;
-  return {
-    cost: every8WeeksEquivalent28d,
-    text: yen(every8WeeksEquivalent28d) + " / 28日（5mg/kgを8週ごと維持換算, " + wt + "kg想定）"
-  };
-}
-
-function getCostInfo(name, weight){
-  if(name === "インフリキシマブ"){
-    return infliximabCost(weight);
-  }
-  const d = DRUGS[name];
-  if(!d) return { cost: 999999, text: "概算未設定" };
-  return { cost: d.defaultCost, text: d.costText };
-}
-
-function showWarning(messages){
-  const warnBox = document.getElementById("warnBox");
-  if(!messages.length){
-    warnBox.style.display = "none";
-    warnBox.innerHTML = "";
-    return;
-  }
-  warnBox.style.display = "block";
-  warnBox.innerHTML = "<b>確認事項</b><br>" + messages.join("<br>");
-}
-
-function getFavoriteDrugs(){
-  return Array.from(document.querySelectorAll(".favDrug:checked")).map(el => el.value);
-}
-
-function getFavoriteFamilies(favorites){
-  const fams = [];
-  favorites.forEach(name => {
-    if(DRUGS[name] && DRUGS[name].family && !fams.includes(DRUGS[name].family)){
-      fams.push(DRUGS[name].family);
-    }
-  });
-  return fams;
-}
-
-function calc(){
-  const ageRaw = document.getElementById("age").value.trim();
-  const wRaw = document.getElementById("w").value.trim();
-
-  const age = ageRaw === "" ? null : parseInt(ageRaw, 10);
-  const weight = wRaw === "" ? null : parseFloat(wRaw);
-
-  const activity = document.getElementById("activity").value;
-  const extent = document.getElementById("extent").value;
-  const mayo = parseInt(document.getElementById("mayo").value, 10);
-
-  const fail5asa = document.getElementById("fail5asa").checked;
-  const steroidDep = document.getElementById("steroidDep").checked;
-  const steroidRef = document.getElementById("steroidRef").checked;
-  const fast = document.getElementById("fast").checked;
-  const oral = document.getElementById("oral").checked;
-
-  const antiTnffail = document.getElementById("antiTnffail").checked;
-  const vedofail = document.getElementById("vedofail").checked;
-  const ustefail = document.getElementById("ustefail").checked;
-  const jakfail = document.getElementById("jakfail").checked;
-  const s1pfail = document.getElementById("s1pfail").checked;
-  const localfail = document.getElementById("localfail").checked;
-
-  const highInfectionRisk = document.getElementById("highInfectionRisk").checked;
-  const cvRisk = document.getElementById("cvRisk").checked;
-  const smoke = document.getElementById("smoke").checked;
-  const pregnancyRisk = document.getElementById("pregnancyRisk").checked;
-
-  const favoriteDrugs = getFavoriteDrugs();
-  const favoriteFamilies = getFavoriteFamilies(favoriteDrugs);
-
-  const warnings = [];
-  if(age === null) warnings.push("・年齢は未入力です");
-  if(weight === null) warnings.push("・体重は未入力です（体重依存薬は60kg換算で概算表示）");
-  if(age !== null && age <= 0) warnings.push("・年齢は正の値で入力してください");
-  if(weight !== null && weight <= 0) warnings.push("・体重は正の値で入力してください");
-
-  const candidates = [];
-  const cautions = [];
-  const summary = [];
-
-  function addCaution(text){
-    if(!cautions.includes(text)) cautions.push(text);
-  }
-
-  function addSummary(text){
-    if(!summary.includes(text)) summary.push(text);
-  }
-
-  function isFavoriteExact(name){
-    return favoriteDrugs.includes(name);
-  }
-
-  function isFavoriteFamily(name){
-    return DRUGS[name] && favoriteFamilies.includes(DRUGS[name].family);
-  }
-
-  function addDrug(name, bucket, route, reason, score){
-    if(candidates.some(x => x.name === name)) return;
-
-    const fam = DRUGS[name] ? DRUGS[name].family : "";
-    let finalScore = score || 0;
-
-    if(isFavoriteExact(name)){
-      finalScore += 60;
-    } else if(isFavoriteFamily(name)){
-      finalScore += 20;
-    }
-
-    if(pregnancyRisk){
-      if(name === "エトラシモド") finalScore -= 1000;
-      if(name === "オザニモド") finalScore -= 120;
-      if(name === "ウパダシチニブ" || name === "トファシチニブ" || name === "フィルゴチニブ"){
-        finalScore -= 80;
+  <script>
+    const drugs = [
+      {
+        id:"mesalazine_oral",
+        name:"メサラジン",
+        brand:"ペンタサ / アサコール / リアルダ",
+        group:"5ASA",
+        route:"oral",
+        speed:1,
+        oral:true,
+        rectal:false,
+        safety:"比較的安全性が高い基本治療",
+        caution:"腎機能、まれに膵炎・間質性腎炎・薬剤熱",
+        when:"5-ASA不耐症でなければ基本治療として継続/最適化",
+      },
+      {
+        id:"mesalazine_supp",
+        name:"メサラジン坐剤",
+        brand:"ペンタサ坐剤",
+        group:"5ASA",
+        route:"rectal",
+        speed:1,
+        oral:false,
+        rectal:true,
+        safety:"直腸炎で有用",
+        caution:"局所刺激感",
+        when:"直腸炎型や遠位病変の基本治療",
+      },
+      {
+        id:"mesalazine_enema",
+        name:"メサラジン注腸",
+        brand:"ペンタサ注腸",
+        group:"5ASA",
+        route:"rectal",
+        speed:1,
+        oral:false,
+        rectal:true,
+        safety:"左側病変までカバーしやすい",
+        caution:"局所刺激感、継続負担",
+        when:"左側大腸炎型までの局所5-ASA最適化",
+      },
+      {
+        id:"rectabule",
+        name:"ブデソニド注腸フォーム",
+        brand:"レクタブル",
+        group:"RECTAL_STEROID",
+        route:"rectal",
+        speed:2,
+        oral:false,
+        rectal:true,
+        safety:"局所ステロイドとして使いやすい",
+        caution:"依存/不応なら追加治療を検討",
+        when:"遠位病変の追加局所治療",
+      },
+      {
+        id:"cortiment",
+        name:"ブデソニドMMX",
+        brand:"コレチメント",
+        group:"STEROID",
+        route:"oral",
+        speed:2,
+        oral:true,
+        rectal:false,
+        safety:"全身ステロイドよりは全身曝露が少ない",
+        caution:"長期維持には向かない",
+        when:"中等症で内服優先時の短期導入候補",
+      },
+      {
+        id:"carogra",
+        name:"カロテグラストメチル",
+        brand:"カログラ",
+        group:"INTEGRIN_ORAL",
+        route:"oral",
+        speed:2,
+        oral:true,
+        rectal:false,
+        safety:"内服で使いやすい",
+        caution:"重症・急性重症では主軸になりにくい",
+        when:"中等症、内服優先、5-ASA不十分時の追加候補",
+      },
+      {
+        id:"upadacitinib",
+        name:"ウパダシチニブ",
+        brand:"リンヴォック",
+        group:"JAK",
+        route:"oral",
+        speed:5,
+        oral:true,
+        rectal:false,
+        safety:"速効性が期待しやすい",
+        caution:"感染症、帯状疱疹、血栓・心血管リスクに注意",
+        when:"即効性重視、ステロイド不応/依存時の有力候補",
+      },
+      {
+        id:"tofacitinib",
+        name:"トファシチニブ",
+        brand:"ゼルヤンツ",
+        group:"JAK",
+        route:"oral",
+        speed:5,
+        oral:true,
+        rectal:false,
+        safety:"速効性が期待しやすい",
+        caution:"感染症、帯状疱疹、血栓・心血管リスクに注意",
+        when:"JAK選択肢の一つ、速効性重視",
+      },
+      {
+        id:"filgotinib",
+        name:"フィルゴチニブ",
+        brand:"ジセレカ",
+        group:"JAK",
+        route:"oral",
+        speed:4,
+        oral:true,
+        rectal:false,
+        safety:"内服で扱いやすい",
+        caution:"感染症、血栓、妊娠関連・生殖関連には慎重",
+        when:"内服優先の追加候補",
+      },
+      {
+        id:"ozanimod",
+        name:"オザニモド",
+        brand:"ゼポジア",
+        group:"S1P",
+        route:"oral",
+        speed:3,
+        oral:true,
+        rectal:false,
+        safety:"内服維持候補",
+        caution:"徐脈、肝機能、黄斑浮腫、感染",
+        when:"中等症で内服優先時の候補",
+      },
+      {
+        id:"etrasimod",
+        name:"エトラシモド",
+        brand:"ベルスピティ",
+        group:"S1P",
+        route:"oral",
+        speed:3,
+        oral:true,
+        rectal:false,
+        safety:"内服維持候補",
+        caution:"徐脈、房室伝導遅延、眼疾患、感染",
+        when:"中等症で内服優先時の候補",
+      },
+      {
+        id:"vedolizumab",
+        name:"ベドリズマブ",
+        brand:"エンタイビオ",
+        group:"VDZ",
+        route:"iv/sc",
+        speed:2,
+        oral:false,
+        rectal:false,
+        safety:"感染・全身性副作用の面で選びやすい場面あり",
+        caution:"即効性はJAKに劣ることがある",
+        when:"感染リスク高い、高齢、併存症ありで有力",
+      },
+      {
+        id:"ustekinumab",
+        name:"ウステキヌマブ",
+        brand:"ステラーラ",
+        group:"UST",
+        route:"iv/sc",
+        speed:2,
+        oral:false,
+        rectal:false,
+        safety:"比較的バランスが良い",
+        caution:"導入は点滴、その後皮下注",
+        when:"安全性と有効性のバランス重視",
+      },
+      {
+        id:"mirikizumab",
+        name:"ミリキズマブ",
+        brand:"オンボー",
+        group:"IL23",
+        route:"iv/sc",
+        speed:3,
+        oral:false,
+        rectal:false,
+        safety:"IL-23系の選択肢",
+        caution:"導入/維持で投与形態が異なる",
+        when:"生物学的製剤の追加候補",
+      },
+      {
+        id:"infliximab",
+        name:"インフリキシマブ",
+        brand:"レミケード",
+        group:"antiTNF",
+        route:"iv",
+        speed:4,
+        oral:false,
+        rectal:false,
+        safety:"重症例で選択肢になりやすい",
+        caution:"感染、結核、注入反応",
+        when:"重症例や速効性重視で候補",
+      },
+      {
+        id:"adalimumab",
+        name:"アダリムマブ",
+        brand:"ヒュミラ",
+        group:"antiTNF",
+        route:"sc",
+        speed:3,
+        oral:false,
+        rectal:false,
+        safety:"皮下注で維持しやすい",
+        caution:"感染、結核",
+        when:"抗TNFの皮下注選択肢",
+      },
+      {
+        id:"golimumab",
+        name:"ゴリムマブ",
+        brand:"シンポニー",
+        group:"antiTNF",
+        route:"sc",
+        speed:3,
+        oral:false,
+        rectal:false,
+        safety:"皮下注で導入・維持",
+        caution:"感染、結核",
+        when:"抗TNFの皮下注選択肢",
       }
-    }
+    ];
 
-    const costInfo = getCostInfo(name, weight);
-    candidates.push({
-      name,
-      family: fam,
-      bucket,
-      route,
-      reason,
-      score: finalScore,
-      cost: costInfo.cost,
-      costText: costInfo.text,
-      contraindications: DRUGS[name]?.contraindications || ["要電子添文確認"],
-      adverse: DRUGS[name]?.adverse || ["要電子添文確認"],
-      duration: DRUGS[name]?.duration || "要電子添文確認"
+    const favoriteIds = [
+      "rectabule","mesalazine_supp","mesalazine_enema","mesalazine_oral",
+      "cortiment","carogra","upadacitinib","tofacitinib","filgotinib",
+      "ozanimod","etrasimod","vedolizumab","ustekinumab","mirikizumab",
+      "infliximab","adalimumab","golimumab"
+    ];
+
+    const favoriteArea = document.getElementById("favoriteArea");
+    favoriteIds.forEach(id=>{
+      const d = drugs.find(x=>x.id===id);
+      const label = document.createElement("label");
+      label.className = "check";
+      label.innerHTML = `
+        <input type="checkbox" value="${d.id}" class="favDrug">
+        <span>
+          <strong>${d.name}（${d.brand}）</strong>
+          <small>${d.group}</small>
+        </span>
+      `;
+      favoriteArea.appendChild(label);
     });
-  }
 
-  if(cvRisk || smoke || (age !== null && age >= 65)){
-    addCaution("JAK阻害薬は血栓・心血管リスクを再確認");
-  }
-  if(highInfectionRisk){
-    addCaution("感染リスクが高い場合は全身免疫抑制の強い薬を慎重に評価");
-  }
-  if(pregnancyRisk){
-    addCaution("妊娠中/妊娠可能性ありではS1P、とくにエトラシモドは回避方向");
-  }
-
-  if(activity === "mild"){
-    addSummary("軽症では5-ASA中心、遠位病変では局所製剤を優先");
-    addDrug("経口5-ASA", "基本治療", "内服", "軽症の基本軸", 50);
-
-    if((extent === "rectum" || extent === "left") && !localfail){
-      addDrug("メサラジン坐剤", "局所5-ASA", "局所", "直腸炎型で優先しやすい", 95);
-      addDrug("メサラジン注腸", "局所5-ASA", "局所", "左側病変まで含めて使いやすい", 92);
-      addDrug("レクタブル", "局所ステロイド", "局所", "局所5-ASAで不十分なら追加候補", 88);
+    function getVal(id){
+      const el = document.getElementById(id);
+      return el.type === "checkbox" ? el.checked : el.value;
     }
 
-    if(fail5asa || mayo >= 2){
-      addDrug("コレチメント", "追加治療", "内服", "5-ASAで不十分な軽〜中等症候補", 82);
-    }
-  }
-
-  if(activity === "moderate"){
-    addSummary("中等症では局所/5-ASAで不十分ならadvanced therapyも早期検討");
-    addDrug("経口5-ASA", "基本治療", "内服", "併用の土台", 45);
-
-    if((extent === "rectum" || extent === "left") && !localfail){
-      addDrug("メサラジン注腸", "局所5-ASA", "局所", "遠位病変ではなお有用", 75);
-      addDrug("レクタブル", "局所ステロイド", "局所", "遠位優位で追加候補", 72);
+    function selectedFavorites(){
+      return [...document.querySelectorAll(".favDrug:checked")].map(x=>x.value);
     }
 
-    if(!steroidDep && !steroidRef && !oral){
-      addDrug("コレチメント", "ステロイド", "内服", "軽〜中等症寄りなら候補", 62);
+    function addScore(map, id, point){
+      map[id] = (map[id] || 0) + point;
     }
 
-    if(fail5asa){
-      addDrug("カログラ", "内服分子標的", "内服", "5-ASA不十分の中等症に適応が合いやすい", 80);
-    }
-  }
-
-  if(activity === "moderate" || activity === "severe"){
-    if(!jakfail && !cvRisk && !highInfectionRisk){
-      if(fast || steroidDep || steroidRef){
-        addDrug("ウパダシチニブ", "JAK阻害薬", "内服", "即効性重視・ステロイド依存/抵抗で有力", 98);
-        addDrug("トファシチニブ", "JAK阻害薬", "内服", "即効性重視のJAK候補", 92);
-        addDrug("フィルゴチニブ", "JAK阻害薬", "内服", "内服JAK候補", 88);
-      } else if(oral){
-        addDrug("ウパダシチニブ", "JAK阻害薬", "内服", "内服希望の有力候補", 90);
-        addDrug("フィルゴチニブ", "JAK阻害薬", "内服", "内服希望のJAK候補", 85);
-        addDrug("トファシチニブ", "JAK阻害薬", "内服", "内服希望のJAK候補", 84);
-      }
-    } else if(cvRisk || highInfectionRisk){
-      addCaution("JAK阻害薬は今回の入力では優先度を下げています");
+    function pushLine(arr, text=""){
+      arr.push(text);
     }
 
-    if(oral && !s1pfail){
-      addDrug("オザニモド", "S1P調節薬", "内服", "内服希望の候補", 78);
-      addDrug("エトラシモド", "S1P調節薬", "内服", "内服希望の候補", 79);
-    }
+    function showCandidates(){
+      const age = Number(getVal("age") || 0);
+      const weight = Number(getVal("weight") || 0);
+      const severity = getVal("severity");
+      const extent = getVal("extent");
+      const mayo = Number(getVal("mayo"));
+      const asaIntolerant = getVal("asaIntolerant");
+      const asaInsufficient = getVal("asaInsufficient");
+      const rectabuleDependent = getVal("rectabuleDependent");
+      const rectabuleRefractory = getVal("rectabuleRefractory");
+      const steroidDependent = getVal("steroidDependent");
+      const steroidRefractory = getVal("steroidRefractory");
+      const needFast = getVal("needFast");
+      const preferOral = getVal("preferOral");
 
-    if(highInfectionRisk){
-      if(!vedofail) addDrug("ベドリズマブ", "生物学的製剤", "皮下注/点滴", "安全性を重視しやすい", 94);
-      if(!ustefail) addDrug("ウステキヌマブ", "生物学的製剤", "点滴→皮下注", "機序変更候補", 82);
-    } else {
-      if(!vedofail) addDrug("ベドリズマブ", "生物学的製剤", "皮下注/点滴", "腸管選択性を重視", 86);
-      if(!ustefail) addDrug("ウステキヌマブ", "生物学的製剤", "点滴→皮下注", "機序変更候補", 81);
-      addDrug("ミリキズマブ", "IL-23製剤", "点滴→皮下注", "機序変更候補", 83);
-    }
+      const hxAntiTNF = getVal("hxAntiTNF");
+      const hxVedo = getVal("hxVedo");
+      const hxUste = getVal("hxUste");
+      const hxJAK = getVal("hxJAK");
+      const hxS1P = getVal("hxS1P");
+      const hxCarogra = getVal("hxCarogra");
 
-    if(!antiTnffail){
-      addDrug("インフリキシマブ", "抗TNF", "点滴", "重めの病勢や速い鎮静化を狙う候補", 89);
-      addDrug("アダリムマブ", "抗TNF", "皮下注", "自己注射で運用しやすい", 76);
-      addDrug("ゴリムマブ", "抗TNF", "皮下注", "4週ごと維持の選択肢", 74);
-    }
-  }
+      const riskInfection = getVal("riskInfection");
+      const riskCV = getVal("riskCV");
+      const riskSmoking = getVal("riskSmoking");
+      const riskPregnancy = getVal("riskPregnancy");
 
-  if(antiTnffail){
-    addSummary("抗TNF不応後は機序変更を優先");
-    if(!vedofail) addDrug("ベドリズマブ", "生物学的製剤", "皮下注/点滴", "抗TNF後の機序変更候補", 96);
-    if(!ustefail) addDrug("ウステキヌマブ", "生物学的製剤", "点滴→皮下注", "抗TNF後の機序変更候補", 92);
-    addDrug("ミリキズマブ", "IL-23製剤", "点滴→皮下注", "抗TNF後の機序変更候補", 93);
+      const favs = selectedFavorites();
+      const score = {};
+      const notes = [];
+      const lines = [];
 
-    if(!jakfail && !cvRisk && !highInfectionRisk){
-      addDrug("ウパダシチニブ", "JAK阻害薬", "内服", "抗TNF後の機序変更候補", 99);
-      addDrug("トファシチニブ", "JAK阻害薬", "内服", "抗TNF後の機序変更候補", 91);
-      addDrug("フィルゴチニブ", "JAK阻害薬", "内服", "抗TNF後の機序変更候補", 89);
-    }
-  }
+      const escalationContext =
+        rectabuleDependent || rectabuleRefractory || steroidDependent || steroidRefractory;
 
-  if(activity === "asuc"){
-    addSummary("急性重症は外来自己判断用ではなく入院管理が前提");
-    addCaution("急性重症では外来ツールよりも入院下評価・感染除外・外科連携が必要");
-    addDrug("インフリキシマブ", "救済治療", "点滴", "急性重症の救済候補として用いられる", 120);
-  }
-
-  candidates.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    return a.cost - b.cost;
-  });
-
-  const top = candidates.slice(0, 5);
-
-  let html = "<div class='sectiontitle'>候補治療（上位5つ）</div>";
-
-  if(top.length === 0){
-    html += "条件に合う候補が抽出されませんでした。入力を見直してください。";
-  } else {
-    top.forEach((c, idx) => {
-      html += "<div class='drugblock'>";
-      html += "<div class='tag'>#" + (idx + 1) + " " + c.name + "</div> ";
-      html += "<span class='graytag'>" + c.bucket + "</span> ";
-      if (isFavoriteExact(c.name)) {
-        html += "<span class='goldtag'>お気に入り一致</span> ";
-      } else if (isFavoriteFamily(c.name)) {
-        html += "<span class='goldtag'>同系統優先</span> ";
-      }
-      if (pregnancyRisk && c.name === "エトラシモド") {
-        html += "<span class='redtag'>禁忌注意</span>";
-      }
-      html += "<br>";
-      html += "<b>投与経路:</b> " + c.route + "<br>";
-      html += "<b>理由:</b> " + c.reason + "<br>";
-      html += "<b>薬剤費概算:</b> " + c.costText + "<br>";
-
-      html += "<div class='small'><b>禁忌・回避の目安:</b><ul class='tight'>";
-      c.contraindications.forEach(item => {
-        html += "<li>" + item + "</li>";
+      drugs.forEach(d=>{
+        score[d.id] = 0;
       });
-      html += "</ul></div>";
 
-      html += "<div class='small'><b>主な副作用:</b><ul class='tight'>";
-      c.adverse.forEach(item => {
-        html += "<li>" + item + "</li>";
+      // 5-ASA基本方針
+      if (!asaIntolerant) {
+        addScore(score, "mesalazine_oral", 100);
+        if (extent === "proctitis") addScore(score, "mesalazine_supp", 90);
+        if (extent === "left" || extent === "pancolitis") addScore(score, "mesalazine_enema", 70);
+        notes.push("5-ASA不耐症ではないため、5-ASA継続/最適化を基本方針に設定しました。");
+      } else {
+        notes.push("5-ASA不耐症ありとして判定しました。5-ASA継続前提は外しています。");
+      }
+
+      // レクタブルの位置づけ
+      if ((extent === "proctitis" || extent === "left") && !rectabuleDependent && !rectabuleRefractory) {
+        addScore(score, "rectabule", 40);
+      }
+      if (rectabuleDependent || rectabuleRefractory) {
+        score["rectabule"] -= 60;
+        notes.push("レクタブル依存/不応ありのため、局所ステロイドの反復ではなく追加薬選択を優先しました。");
+      }
+
+      // このアプリの主目的
+      if (escalationContext) {
+        notes.push("この症例は『5-ASAを基本治療としたうえで追加薬を検討する場面』として評価しました。");
+      } else {
+        notes.push("ステロイド依存/不応またはレクタブル依存/不応の選択がないため、本来の用途より早い段階です。");
+      }
+
+      // 病勢
+      if (severity === "mild") {
+        addScore(score, "carogra", 18);
+        addScore(score, "cortiment", 12);
+        addScore(score, "vedolizumab", 8);
+      }
+      if (severity === "moderate") {
+        addScore(score, "carogra", 24);
+        addScore(score, "vedolizumab", 22);
+        addScore(score, "ustekinumab", 18);
+        addScore(score, "mirikizumab", 20);
+        addScore(score, "upadacitinib", 24);
+        addScore(score, "filgotinib", 16);
+        addScore(score, "ozanimod", 16);
+        addScore(score, "etrasimod", 16);
+        addScore(score, "infliximab", 14);
+      }
+      if (severity === "severe") {
+        addScore(score, "infliximab", 35);
+        addScore(score, "upadacitinib", 30);
+        addScore(score, "tofacitinib", 24);
+        addScore(score, "vedolizumab", 15);
+        addScore(score, "ustekinumab", 14);
+        addScore(score, "mirikizumab", 14);
+        score["carogra"] -= 8;
+        score["ozanimod"] -= 8;
+        score["etrasimod"] -= 8;
+      }
+      if (severity === "acute_severe") {
+        addScore(score, "infliximab", 60);
+        addScore(score, "upadacitinib", 24);
+        score["carogra"] -= 25;
+        score["ozanimod"] -= 20;
+        score["etrasimod"] -= 20;
+        score["vedolizumab"] -= 10;
+        score["ustekinumab"] -= 10;
+        score["mirikizumab"] -= 10;
+        notes.push("急性重症では、入院治療・救済治療・手術判断を含む別次元の評価が必要です。");
+      }
+
+      // Mayo
+      if (mayo >= 2) {
+        addScore(score, "upadacitinib", 12);
+        addScore(score, "infliximab", 10);
+        addScore(score, "mirikizumab", 8);
+        addScore(score, "vedolizumab", 8);
+      }
+      if (mayo === 3) {
+        addScore(score, "infliximab", 10);
+        addScore(score, "upadacitinib", 10);
+      }
+
+      // 依存/不応の文脈
+      if (steroidDependent) {
+        addScore(score, "vedolizumab", 18);
+        addScore(score, "ustekinumab", 18);
+        addScore(score, "mirikizumab", 18);
+        addScore(score, "upadacitinib", 18);
+        addScore(score, "carogra", 12);
+        addScore(score, "ozanimod", 10);
+        addScore(score, "etrasimod", 10);
+        score["cortiment"] -= 20;
+      }
+      if (steroidRefractory) {
+        addScore(score, "infliximab", 26);
+        addScore(score, "upadacitinib", 24);
+        addScore(score, "tofacitinib", 16);
+        score["cortiment"] -= 30;
+      }
+      if (rectabuleDependent || rectabuleRefractory) {
+        addScore(score, "carogra", 16);
+        addScore(score, "vedolizumab", 16);
+        addScore(score, "ustekinumab", 14);
+        addScore(score, "mirikizumab", 14);
+        addScore(score, "upadacitinib", 16);
+        addScore(score, "ozanimod", 12);
+        addScore(score, "etrasimod", 12);
+      }
+
+      // 5-ASA不十分のみで、依存/不応なし
+      if (asaInsufficient && !escalationContext) {
+        addScore(score, "carogra", 20);
+        addScore(score, "cortiment", 12);
+        if (extent === "proctitis" || extent === "left") addScore(score, "rectabule", 16);
+      }
+
+      // 内服優先
+      if (preferOral) {
+        ["carogra","upadacitinib","tofacitinib","filgotinib","ozanimod","etrasimod","cortiment"].forEach(id=>addScore(score,id,14));
+        ["infliximab","vedolizumab","ustekinumab","mirikizumab","adalimumab","golimumab"].forEach(id=>addScore(score,id,-5));
+      }
+
+      // 即効性
+      if (needFast) {
+        addScore(score, "upadacitinib", 18);
+        addScore(score, "tofacitinib", 14);
+        addScore(score, "infliximab", 16);
+        addScore(score, "adalimumab", 6);
+        addScore(score, "golimumab", 6);
+        addScore(score, "vedolizumab", -6);
+      }
+
+      // 既治療不応
+      if (hxAntiTNF) ["infliximab","adalimumab","golimumab"].forEach(id=>addScore(score,id,-50));
+      if (hxVedo) addScore(score,"vedolizumab",-50);
+      if (hxUste) addScore(score,"ustekinumab",-50);
+      if (hxJAK) ["upadacitinib","tofacitinib","filgotinib"].forEach(id=>addScore(score,id,-45));
+      if (hxS1P) ["ozanimod","etrasimod"].forEach(id=>addScore(score,id,-45));
+      if (hxCarogra) addScore(score,"carogra",-45);
+
+      // リスク
+      if (riskInfection || age >= 65) {
+        addScore(score,"vedolizumab",20);
+        addScore(score,"ustekinumab",12);
+        addScore(score,"mirikizumab",10);
+        ["upadacitinib","tofacitinib","filgotinib"].forEach(id=>addScore(score,id,-18));
+        ["infliximab","adalimumab","golimumab"].forEach(id=>addScore(score,id,-10));
+      }
+
+      if (riskCV) {
+        ["upadacitinib","tofacitinib","filgotinib"].forEach(id=>addScore(score,id,-22));
+      }
+
+      if (riskPregnancy) {
+        ["upadacitinib","tofacitinib","filgotinib","ozanimod","etrasimod","carogra"].forEach(id=>addScore(score,id,-20));
+      }
+
+      if (riskSmoking) {
+        addScore(score,"vedolizumab",3);
+        addScore(score,"ustekinumab",3);
+      }
+
+      // お気に入り
+      favs.forEach(id=>{
+        addScore(score,id,18);
+        const favDrug = drugs.find(d=>d.id===id);
+        drugs.forEach(d=>{
+          if (d.group === favDrug.group && d.id !== id) addScore(score,d.id,6);
+        });
       });
-      html += "</ul></div>";
 
-      html += "<div class='small'><b>投薬期間メモ:</b> " + c.duration + "</div>";
-      html += "</div>";
-    });
-  }
+      // 基本治療として5-ASAは常に目立たせるが、追加薬順位には入れすぎない
+      const addOnCandidates = drugs
+        .filter(d => !["5ASA","RECTAL_STEROID","STEROID"].includes(d.group))
+        .map(d => ({...d, score:score[d.id]}))
+        .sort((a,b)=>b.score-a.score);
 
-  html += "<hr><div class='sectiontitle'>整理メモ</div>";
-  html += (summary.length ? summary.map(x => "・" + x).join("<br>") : "・標準的な整理のみ");
+      const top5 = addOnCandidates.slice(0,5);
 
-  html += "<hr><div class='sectiontitle'>全体注意</div>";
-  html += (cautions.length ? cautions.map(x => "・" + x).join("<br>") : "・特記事項なし");
+      // 出力
+      pushLine(lines, "■ 判定サマリー");
+      pushLine(lines, `年齢: ${age || "未入力"}歳 / 体重: ${weight || "未入力"}kg / 病勢: ${labelSeverity(severity)} / 範囲: ${labelExtent(extent)} / Mayo: ${mayo}`);
+      pushLine(lines, "");
 
-  html += "<hr>";
-  html += "体重: " + (weight !== null ? weight + "kg" : "未入力（60kg換算を使用）") + "<br>";
-  html += "病勢: " + (
-    activity === "mild" ? "軽症" :
-    activity === "moderate" ? "中等症" :
-    activity === "severe" ? "重症" :
-    "急性重症"
-  ) + "<br>";
-  html += "病変範囲: " + (
-    extent === "rectum" ? "直腸炎型" :
-    extent === "left" ? "左側大腸炎型" :
-    "全大腸炎型"
-  ) + "<br>";
-  html += "Mayo: " + mayo + "<br>";
-  html += "お気に入り: " + (favoriteDrugs.length ? favoriteDrugs.join(" / ") : "なし") + "<br>";
-  html += "<div class='note'>※個人用の簡易整理ツールです。禁忌・副作用は簡略表示です。実臨床では感染評価、CMV/C. difficile、結核/HBV、妊娠、ワクチン、心血管・血栓リスク、眼科/心電図評価、保険適応、電子添文を必ず確認してください。</div>";
+      pushLine(lines, "■ 基本方針");
+      if (!asaIntolerant) {
+        pushLine(lines, "・5-ASA不耐症ではないため、5-ASA投与を基本とします。");
+        pushLine(lines, `・経口5-ASA: メサラジン（ペンタサ / アサコール / リアルダ）`);
+        if (extent === "proctitis") {
+          pushLine(lines, "・局所5-ASA: メサラジン坐剤（ペンタサ坐剤）を優先");
+        } else {
+          pushLine(lines, "・局所5-ASA: メサラジン注腸（ペンタサ注腸）併用を検討");
+        }
+      } else {
+        pushLine(lines, "・5-ASA不耐症ありのため、5-ASAを基本治療には置いていません。");
+      }
+      pushLine(lines, "");
 
-  document.getElementById("out").innerHTML = html;
-  showWarning(warnings);
+      pushLine(lines, "■ このアプリでの位置づけ");
+      if (escalationContext) {
+        pushLine(lines, "・ステロイド依存/不応またはレクタブル依存/不応のため、追加薬選択の場面として表示しています。");
+      } else {
+        pushLine(lines, "・依存/不応の条件が未選択です。追加薬より前に、5-ASA・局所治療・短期ステロイド最適化の段階も再確認してください。");
+      }
+      pushLine(lines, "");
 
-  let copyText = "UC治療候補＋複数お気に入り＋安全性表示\n\n";
+      pushLine(lines, "■ 追加薬候補 上位5つ");
+      top5.forEach((d, i)=>{
+        pushLine(lines, `${i+1}. ${d.name}（${d.brand}）`);
+        pushLine(lines, `   - 理由: ${d.when}`);
+        pushLine(lines, `   - 注意: ${d.caution}`);
+      });
+      pushLine(lines, "");
 
-  if(warnings.length){
-    copyText += "【確認事項】\n" + warnings.map(x => x.replace("・","")).join("\n") + "\n\n";
-  }
+      pushLine(lines, "■ 補足メモ");
+      notes.forEach(n=>pushLine(lines, `・${n}`));
+      pushLine(lines, "");
 
-  copyText += "【候補治療（上位5つ）】\n";
-  top.forEach((c, i) => {
-    copyText += (i + 1) + ". " + c.name + " [" + c.bucket + "]\n";
-    copyText += "投与経路: " + c.route + "\n";
-    copyText += "理由: " + c.reason + "\n";
-    copyText += "薬剤費概算: " + c.costText + "\n";
-    copyText += "禁忌・回避の目安: " + c.contraindications.join(" / ") + "\n";
-    copyText += "主な副作用: " + c.adverse.join(" / ") + "\n";
-    copyText += "投薬期間メモ: " + c.duration + "\n";
-    if (isFavoriteExact(c.name)) {
-      copyText += "お気に入り一致: はい\n";
-    } else if (isFavoriteFamily(c.name)) {
-      copyText += "同系統優先: はい\n";
+      pushLine(lines, "■ 参考: 追加薬以外の位置づけ");
+      pushLine(lines, `・局所ステロイド: ブデソニド注腸フォーム（レクタブル）`);
+      pushLine(lines, `・経口ステロイド系候補: ブデソニドMMX（コレチメント）※長期維持には向かない`);
+      pushLine(lines, "");
+
+      pushLine(lines, "■ 主要薬剤一覧（一般名 / 商品名）");
+      drugs.forEach(d=>{
+        pushLine(lines, `・${d.name}（${d.brand}）`);
+      });
+
+      document.getElementById("result").textContent = lines.join("\n");
     }
-    copyText += "\n";
-  });
 
-  copyText += "【整理メモ】\n";
-  copyText += (summary.length ? summary.map(x => "・" + x).join("\n") : "・標準的な整理のみ") + "\n\n";
+    function labelSeverity(v){
+      return {
+        mild:"軽症",
+        moderate:"中等症",
+        severe:"重症",
+        acute_severe:"急性重症（入院想定）"
+      }[v] || v;
+    }
 
-  copyText += "【全体注意】\n";
-  copyText += (cautions.length ? cautions.map(x => "・" + x).join("\n") : "・特記事項なし") + "\n\n";
+    function labelExtent(v){
+      return {
+        proctitis:"直腸炎型",
+        left:"左側大腸炎型",
+        pancolitis:"全大腸炎型"
+      }[v] || v;
+    }
 
-  copyText += "体重: " + (weight !== null ? weight + "kg" : "未入力（60kg換算を使用）") + "\n";
-  copyText += "病勢: " + (
-    activity === "mild" ? "軽症" :
-    activity === "moderate" ? "中等症" :
-    activity === "severe" ? "重症" :
-    "急性重症"
-  ) + "\n";
-  copyText += "病変範囲: " + (
-    extent === "rectum" ? "直腸炎型" :
-    extent === "left" ? "左側大腸炎型" :
-    "全大腸炎型"
-  ) + "\n";
-  copyText += "Mayo: " + mayo + "\n";
-  copyText += "お気に入り: " + (favoriteDrugs.length ? favoriteDrugs.join(" / ") : "なし") + "\n";
-
-  lastCopyText = copyText;
-}
-
-function copyResult(){
-  const copyMsg = document.getElementById("copyMsg");
-  if(!lastCopyText){
-    copyMsg.style.display = "block";
-    copyMsg.style.color = "#ff3b30";
-    copyMsg.textContent = "先に候補を表示してください";
-    setTimeout(() => {
-      copyMsg.style.display = "none";
-      copyMsg.style.color = "#34c759";
-    }, 2000);
-    return;
-  }
-
-  if(navigator.clipboard && window.isSecureContext){
-    navigator.clipboard.writeText(lastCopyText).then(() => {
-      copyMsg.style.display = "block";
-      copyMsg.style.color = "#34c759";
-      copyMsg.textContent = "コピーしました";
-      setTimeout(() => { copyMsg.style.display = "none"; }, 2000);
-    }).catch(() => fallbackCopy());
-  } else {
-    fallbackCopy();
-  }
-}
-
-function fallbackCopy(){
-  const copyMsg = document.getElementById("copyMsg");
-  const ta = document.createElement("textarea");
-  ta.value = lastCopyText;
-  document.body.appendChild(ta);
-  ta.select();
-  ta.setSelectionRange(0, 99999);
-
-  try{
-    document.execCommand("copy");
-    copyMsg.style.display = "block";
-    copyMsg.style.color = "#34c759";
-    copyMsg.textContent = "コピーしました";
-  }catch(e){
-    copyMsg.style.display = "block";
-    copyMsg.style.color = "#ff3b30";
-    copyMsg.textContent = "コピーに失敗しました";
-  }
-
-  document.body.removeChild(ta);
-  setTimeout(() => {
-    copyMsg.style.display = "none";
-    copyMsg.style.color = "#34c759";
-  }, 2000);
-}
-</script>
-
+    async function copyResult(){
+      const text = document.getElementById("result").textContent;
+      try{
+        await navigator.clipboard.writeText(text);
+        alert("コピーしました");
+      }catch(e){
+        alert("コピーに失敗しました");
+      }
+    }
+  </script>
 </body>
 </html>
